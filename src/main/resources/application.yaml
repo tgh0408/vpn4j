@@ -1,0 +1,114 @@
+project:
+  version: @project.version@
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+vpn4j:
+# 是否监听VPN管理端口
+  manager:
+    enable: true
+# 定期检查账号过期任务
+  check-expire:
+    enable: false
+
+spring:
+  application:
+    name: openvpn4j
+  sql:
+    init:
+      mode: never # 总是执行初始化脚本
+#      platform: sqlite # 关键配置：指定当前平台为 sqlite
+#      schema-locations: classpath:account.sql
+  datasource:
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: jdbc:p6spy:sqlite:${user.dir}/openvpn4j.db
+
+  threads:
+    virtual:
+      enabled: true
+  lifecycle:
+    timeout-per-shutdown-phase: 30s # 停机时等待任务的最长时间
+  task:
+    execution:
+      thread-name-prefix: v-async-
+      mode: force
+  messages:
+    basename: i18n/messages
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+  mvc:
+    static-path-pattern: /static/**
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    serialization:
+      indent-output: false
+      fail-on-empty-beans: false
+    deserialization:
+      fail_on_unknown_properties: false
+    time-zone: GMT+8
+
+# 缓存配置 本地缓存
+cache:
+  expire: 3600
+  expire-unit: SECONDS
+  initial-capacity: 100
+  max-capacity: 1024
+
+# Sa-Token配置
+sa-token:
+  # token名称 (同时也是cookie名称)
+  token-name: Authorization
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  is-share: false
+  # jwt秘钥
+  jwt-secret-key: openvpn4jyyds
+  token-prefix: Bearer
+
+mybatis-plus:
+  # 多包名使用 例如 org.ssl.**.mapper,org.xxx.**.mapper
+  mapperPackage: org.ssl.vpn4j.mapper
+  # 对应的 XML 文件位置
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+  # 实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: org.ssl.**.domain
+  global-config:
+    dbConfig:
+      # 主键类型
+      # AUTO 自增 NONE 空 INPUT 用户输入 ASSIGN_ID 雪花 ASSIGN_UUID 唯一 UUID
+      # 如需改为自增 需要将数据库表全部设置为自增
+      idType: ASSIGN_ID
+
+--- # 默认/推荐使用sse推送
+sse:
+  enabled: true
+  path: /resource/sse
+
+security:
+  # 排除路径
+  excludes:
+    - /*.html
+    - /**/*.html
+    - /**/*.css
+    - /**/*.js
+    - /favicon.ico
+    - /error
+    - /*/api-docs
+    - /*/api-docs/**
+    - /warm-flow-ui/config
+
+# 日志配置
+logging:
+  level:
+    org.springframework: warn
+    org.mybatis.spring.mapper: error
+    org.apache.fury: warn
+  config: classpath:logback-plus.xml
