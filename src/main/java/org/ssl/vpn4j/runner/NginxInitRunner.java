@@ -190,13 +190,25 @@ public class NginxInitRunner implements ApplicationRunner, Ordered {
 
     private void initOrUpdateWeb() {
         try {
-            PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-            Resource[] resources = resolver.getResources("classpath:dist/dist.zip");
-            if (resources.length == 0) {
+            String [] path = {
+                    "classpath:dist/dist.zip",
+                    "file:./dist.zip"
+            };
+            Resource resource = null;
+            for (String s : path) {
+                PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+                Resource[] resources = resolver.getResources(s);
+                if (resources.length > 0) {
+                    resource = resources[0];
+                    break;
+                }
+            }
+
+            if (resource == null) {
                 log.warn(">>> [Nginx] 未找到前端文件 dist.zip");
                 return;
             }
-            Resource resource = resources[0];
+
             log.info(">>> [Nginx] web文件包路径: {}", resource.getURL().getPath());
             if (appInfo.checkVersion()) {
                 log.info(">>> [Nginx] 版本号一致: {} ", appInfo.getVersion());
