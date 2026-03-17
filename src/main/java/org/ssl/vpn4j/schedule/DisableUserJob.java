@@ -5,11 +5,10 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.ssl.vpn4j.domain.Account;
 import org.ssl.vpn4j.mapper.AccountMapper;
+import org.ssl.vpn4j.schedule.cron.VpnSchedule;
 
 import java.time.Instant;
 import java.util.Date;
@@ -20,13 +19,28 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 @ConditionalOnProperty(prefix = "vpn4j.check-expire", name = "enable", havingValue = "true")
-public class DisableUserJob {
+public class DisableUserJob implements VpnSchedule {
 
     private final AccountMapper accountMapper;
 
-    @Scheduled(cron = "*/5 * * * * ?")  // 改为每5分钟执行一次
-    @Async("scheduledExecutorService")
-    public void disableUser() {
+
+    @Override
+    public String getScheduleName() {
+        return this.getClass().getSimpleName();
+    }
+
+    @Override
+    public String getScheduleDescription() {
+        return "Disable User Job";
+    }
+
+    @Override
+    public String getCron() {
+        return "*/5 * * * * ?";
+    }
+
+    @Override
+    public void run() {
         try {
             long executeTime = Instant.now().getEpochSecond();
             // 查询已过期但还未禁用的账号
@@ -80,4 +94,5 @@ public class DisableUserJob {
                         account.getExpireTime()));
 
     }
+
 }

@@ -1,17 +1,13 @@
 package org.ssl.vpn4j.schedule;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
+import org.ssl.common.core.utils.SpringUtils;
 import org.ssl.common.sse.utils.SseMessageUtils;
-import org.ssl.vpn4j.event.SsePushEvent;
+import org.ssl.vpn4j.event.SseCpuPushEvent;
 import org.ssl.vpn4j.schedule.cron.VpnSchedule;
 
 @Component
-@RequiredArgsConstructor
-public class SystemInfoPushJob implements VpnSchedule {
-    final ApplicationEventPublisher applicationEventPublisher;
-
+public class CpuPushJob implements VpnSchedule {
     @Override
     public String getScheduleName() {
         return this.getClass().getSimpleName();
@@ -19,7 +15,7 @@ public class SystemInfoPushJob implements VpnSchedule {
 
     @Override
     public String getScheduleDescription() {
-        return "System Info Push Job";
+        return "CPU Push Job";
     }
 
     @Override
@@ -33,7 +29,7 @@ public class SystemInfoPushJob implements VpnSchedule {
           网页无人在线则无需计算
          */
         if (!SseMessageUtils.isEmpty()){
-            applicationEventPublisher.publishEvent(new SsePushEvent());
+            SpringUtils.context().publishEvent(new SseCpuPushEvent());
         }
     }
 }
