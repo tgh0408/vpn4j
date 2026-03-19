@@ -104,6 +104,10 @@ security:
     - /*/api-docs
     - /*/api-docs/**
     - /warm-flow-ui/config
+  # openvpn请求授权接口仅对本地请求开放
+  local-excludes:
+    - /openvpn/auth
+    - /openvpn/ccd
 
 # 日志配置
 logging:

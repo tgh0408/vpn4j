@@ -30,19 +30,18 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@SaIgnore
 public class ClientAuthController {
     final ClientAuthService clientAuthService;
 
     @Log(title = "VPN连接", businessType = BusinessType.GRANT, operatorType = OperatorType.MANAGE)
-    @PostMapping("/openvpn/auth")
+    @PostMapping("openvpn/auth")
     public R<Void> auth(@Validated @RequestBody ClientAuthBo clientAuthBo, @RequestHeader(value = "X-OpenVPN-Server", required = false) String serverName) {
         clientAuthService.authenticate(clientAuthBo, serverName);
         return R.ok();
     }
 
     //    @Log(title = "VPN获取ccd", businessType = BusinessType.GRANT, operatorType = OperatorType.MANAGE)
-    @PostMapping("/openvpn/ccd")
+    @PostMapping("openvpn/ccd")
     public R<String> ccd(@RequestBody CcdBo request) {
         String username = request.getUsername();
         String configContent = clientAuthService.generateCcdConfig(username);
@@ -50,7 +49,8 @@ public class ClientAuthController {
     }
 
     @Log(title = "下载客户端", businessType = BusinessType.DOWNLOAD, operatorType = OperatorType.MANAGE)
-    @GetMapping("/client/download")
+    @GetMapping("client/download")
+    @SaIgnore
     public void getClient(HttpServletResponse response) {
         if (response != null) {
             try {

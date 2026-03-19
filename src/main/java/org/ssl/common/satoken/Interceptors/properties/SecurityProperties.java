@@ -12,5 +12,9 @@ public class SecurityProperties {
      */
     private String[] excludes = new String[0];
 
+    /**
+     * 本机指定路径放行
+     */
+    private String[] localExcludes = new String[0];
 
 }
