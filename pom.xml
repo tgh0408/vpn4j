@@ -11,7 +11,7 @@
 
     <groupId>org.ssl</groupId>
     <artifactId>vpn4j</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>vpn4j</name>
     <description>vpn4j</description>
     <url/>
