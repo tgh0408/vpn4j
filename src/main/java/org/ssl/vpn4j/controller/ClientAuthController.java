@@ -55,10 +55,25 @@ public class ClientAuthController {
         if (response != null) {
             try {
                 PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-                Resource resources = resolver.getResource("classpath:client/vpn-client-for-windows.zip");
+
+                String [] path = {
+                        "classpath:client/vpn-client-for-windows.zip",
+                        "file:./vpn-client-for-windows.zip"
+                };
+                Resource resource = null;
+                for (String s : path) {
+                    Resource[] resources = resolver.getResources(s);
+                    if (resources.length > 0) {
+                        resource = resources[0];
+                        break;
+                    }
+                }
+                if (resource == null) {
+                    throw new ServiceException("下载客户端失败,找不到客户端资源");
+                }
                 FileUtils.setAttachmentResponseHeader(response, "vpn-client-for-windows.zip");
                 response.setContentType("application/octet-stream");
-                ServletUtils.write(response, resources.getInputStream());
+                ServletUtils.write(response, resource.getInputStream());
             } catch (IOException e) {
                 throw new ServiceException("下载客户端失败");
             }
