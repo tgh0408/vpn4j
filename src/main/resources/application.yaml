@@ -4,7 +4,7 @@ project:
 server:
   port: 8080
   servlet:
-    context-path: /
+    context-path: /api
 
 vpn4j:
 # 是否监听VPN管理端口

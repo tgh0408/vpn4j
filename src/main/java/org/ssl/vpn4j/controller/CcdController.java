@@ -23,32 +23,32 @@ public class CcdController {
     final CcdService ccdService;
     final ClientAuthService clientAuthService;
 
-    @GetMapping("/ccd")
+    @GetMapping("ccd")
     public TableDataInfo<CcdVO> ccd(CcdBo bo, PageQuery pageQuery) {
         return ccdService.getCcd(bo, pageQuery);
     }
 
-    @GetMapping("/ccd/{id}")
+    @GetMapping("ccd/{id}")
     public R<String> ccdInfo(@PathVariable Long id) {
         return R.ok(null, clientAuthService.generateCcdConfig(id));
     }
 
     @Log(title = "创建ccd配置", businessType = BusinessType.INSERT, operatorType = OperatorType.MANAGE)
-    @PostMapping("/ccd/addccdCfg")
+    @PostMapping("ccd/addccdCfg")
     public R<String> addCcd(@Validated(AddGroup.class) @RequestBody CcdBo bo) {
         ccdService.addCcd(bo);
         return R.ok();
     }
 
     @Log(title = "更新ccd配置", businessType = BusinessType.UPDATE, operatorType = OperatorType.MANAGE)
-    @PostMapping("/ccd/update")
+    @PostMapping("ccd/update")
     public R<Void> updateCcd(@Validated(EditGroup.class) @RequestBody CcdBo bo) {
         ccdService.updateCcd(bo);
         return R.ok();
     }
 
     @Log(title = "删除ccd配置", businessType = BusinessType.DELETE, operatorType = OperatorType.MANAGE)
-    @DeleteMapping("/ccd/remove")
+    @DeleteMapping("ccd/remove")
     public R<Void> removeCcd(@Validated(DelGroup.class) @RequestBody CcdBo bo) {
         ccdService.removeCcd(bo);
         return R.ok();

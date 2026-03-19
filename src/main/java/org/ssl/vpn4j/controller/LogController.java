@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 public class LogController {
     final SysLogService sysLogService;
 
-    @GetMapping("/log/history")
+    @GetMapping("log/history")
     public R<List<String>> getHistory(@RequestParam(defaultValue = "100") int lines) throws IOException {
         // 建议使用绝对路径或从配置中获取，防止找不到文件
         File logFile = new File("./logs/sys-console.log");
@@ -38,7 +38,7 @@ public class LogController {
     }
 
 
-    @GetMapping("/log/getVpnHistory")
+    @GetMapping("log/getVpnHistory")
     public R<List<String>> getVpnHistory(@RequestParam(defaultValue = "100") int lines) throws IOException {
         // 从配置中获取，正则匹配,防止找不到文件
         String serverConf = CacheUtils.get(SystemConfigEnum.server_conf);
@@ -56,7 +56,7 @@ public class LogController {
         return R.ok(logList);
     }
 
-    @GetMapping("/log/getOperationLog")
+    @GetMapping("log/getOperationLog")
     public TableDataInfo<Syslog> getOperationLog(@Validated SyslogVO syslog, PageQuery pageQuery) {
         return sysLogService.getOperationLog(syslog, pageQuery);
     }
